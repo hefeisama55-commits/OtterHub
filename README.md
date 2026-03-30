@@ -34,7 +34,7 @@
 OtterHub 是一个 **为个人使用场景定制** 的私人云盘方案：
 
 - 基于 **Cloudflare Pages + KV**
-- 使用 **Telegram Bot** 作为实际文件存储
+- 使用 **Telegram Bot** 作为实际文件存储（本地开发使用 R2）
 - 通过 **分片上传** 突破 20MB 单文件限制
 - 支持 **HTTP Range**，适合视频 / 大文件访问
 - 架构克制、状态最小化，优先长期可维护性
@@ -80,8 +80,8 @@ OtterHub 是一个 **为个人使用场景定制** 的私人云盘方案：
 ### 前置要求
 
 - Node.js 18+
-- Cloudflare 账号（免费）
-- Telegram Bot Token
+- Cloudflare 账号（免费，部署需要）
+- Telegram Bot Token（生产默认存储需要；本地开发默认不需要）
 
 ### 本地开发
 
@@ -95,7 +95,7 @@ OtterHub 是一个 **为个人使用场景定制** 的私人云盘方案：
    ```bash
    npm run dev
    ```
-> 第一次启动需要构建前端 `npm run build`，后续启动直接 `npm run dev` 即可。
+> 第一次启动需要构建前端 `npm run build`（生成 `frontend/out` 供 Wrangler Pages Dev 使用），后续启动直接 `npm run dev` 即可。
 
 
 3. **访问网站**
@@ -138,7 +138,7 @@ API_TOKEN=your_api_token        # (可选) 用于 API 调用的 Token
 
 ### 4. 重新部署
 
-回到部署页面重试部署，让环境变量和 KV 生效。
+回到部署页面重试部署，让环境变量和 KV 绑定生效。
 
 ---
 
@@ -304,12 +304,17 @@ OtterHub/
 │   │   ├── wallpaper/  # 壁纸服务
 │   │   └── ...
 │   ├── middleware/     # 中间件 (Auth, CORS)
-│   ├── utils/          # 工具库 (DB Adapters, Proxy)
+│   ├── utils/          # 工具库
+│   │   ├── db-adapter/ # 存储适配器 (Telegram/R2)
+│   │   ├── proxy/      # 代理
+│   │   └── ...
 │   ├── app.ts          # Hono App 定义 & AppType 导出
 │   └── [[path]].ts     # Pages Functions 入口
 ├── shared/             # 前后端共享类型/工具 (Workspaces)
+├── test/               # 基础端到端测试 (mocha)
 ├── public/             # 静态资源
 ├── package.json        # Monorepo 配置
+├── wrangler.jsonc      # Wrangler 配置（本地开发/静态资源）
 └── README.md
 ```
 
@@ -321,7 +326,6 @@ OtterHub/
 - [Telegram Bot API](https://core.telegram.org/bots/api)
 - [Telegraph-Image](https://github.com/cf-pages/Telegraph-Image) - CF + TG 文件存储方案来源
 - [CloudFlare-ImgBed](https://github.com/MarSeventh/CloudFlare-ImgBed) - DB 适配器 & 分片上传设计的灵感来源
-- [Solara](https://github.com/akudamatata/Solara)
 
 ---
 
