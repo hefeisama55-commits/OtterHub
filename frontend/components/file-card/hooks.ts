@@ -72,14 +72,7 @@ export function useFileCardActions(file: FileItem) {
     const url = getFileUrl(file.name);
     const fileName = file.metadata?.fileName?.toLowerCase() || "";
     
-    // 1. EPUB 专用阅读器
-    if (fileName.endsWith(".epub")) {
-      const readerUrl = `/epub-reader?url=${encodeURIComponent(url)}&title=${encodeURIComponent(file.metadata?.fileName || "Epub")}`;
-      window.open(readerUrl, "_blank", "noopener,noreferrer");
-      return;
-    }
-
-    // 2. 文本阅读器：如果是文档类型且不是已知的二进制格式
+    // 文本阅读器：如果是文档类型且不是已知的二进制格式
     if (
       fileType === FileType.Document && 
       !binaryExtensions.some(ext => fileName.endsWith(ext))
@@ -88,19 +81,19 @@ export function useFileCardActions(file: FileItem) {
       return;
     }
 
-    // 3. 视频预览
+    // 视频预览
     if (fileType === FileType.Video) {
       openPreview(file, 'video');
       return;
     }
 
-    // 4. 音频预览
+    // 音频预览
     if (fileType === FileType.Audio) {
       openPreview(file, 'audio');
       return;
     }
     
-    // 5. 其他类型（图片、PDF、压缩包等）直接打开
+    // 其他类型（图片、PDF、压缩包等）直接打开
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
@@ -143,7 +136,6 @@ export function useFileCardActions(file: FileItem) {
     setIsResuming(true);
     const chunkInfo = file.metadata.chunkInfo!;
     const totalChunks = chunkInfo.total;
-    const uploadedIndices = new Set(chunkInfo.uploadedIndices || []);
 
     try {
       const chunkIndicesToUpload = getMissingChunkIndices(
