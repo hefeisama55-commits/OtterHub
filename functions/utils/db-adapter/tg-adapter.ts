@@ -17,7 +17,7 @@ import {
 } from "./shared-utils";
 import {
   getTgFileId,
-  getTgPhotoVariantIds,
+  getTgImageVariantIds,
   getVideoThumbId,
   resolveFileDescriptor,
   buildTgApiUrl,
@@ -25,6 +25,7 @@ import {
   getTgFilePath,
   processGifFile,
 } from "./tg-tools";
+
 import { MAX_CHUNK_SIZE } from "@shared/types";
 import { analyzeImageAndEnrich, isSupportedImage } from "../ai/image-analysis";
 
@@ -96,19 +97,19 @@ export class TGAdapter extends BaseAdapter {
       throw new Error(result.message);
     }
 
-    const photoVariantIds =
-      fileType === FileType.Image && apiEndpoint === "sendPhoto"
-        ? getTgPhotoVariantIds(result.data)
+    const imageVariantIds =
+      fileType === FileType.Image
+        ? getTgImageVariantIds(result.data)
         : { fileId: null, previewFileId: null };
 
-    const tgFileId = photoVariantIds.fileId ?? getTgFileId(result.data);
+    const tgFileId = imageVariantIds.fileId ?? getTgFileId(result.data);
     if (!tgFileId) {
       throw new Error("Failed to extract Telegram file_id");
     }
 
     // 图片和视频都尽量复用 Telegram 返回的小图能力
-    if (fileType === FileType.Image && photoVariantIds.previewFileId) {
-      metadata.thumbUrl = `/file/${photoVariantIds.previewFileId}/thumb`;
+    if (fileType === FileType.Image && imageVariantIds.previewFileId) {
+      metadata.thumbUrl = `/file/${imageVariantIds.previewFileId}/thumb`;
     }
     if (fileType === FileType.Video) {
       const thumbFileId = getVideoThumbId(result.data);
@@ -127,7 +128,7 @@ export class TGAdapter extends BaseAdapter {
     // 图片上传成功后异步触发 AI 分析，优先使用 Telegram 返回的小图
     if (kv && fileType === FileType.Image && isSupportedImage(processedFile.type, processedFileName)) {
       const enrichTask = analyzeImageAndEnrich(this.env, kv, key, processedFile, metadata, {
-        previewFileId: photoVariantIds.previewFileId,
+        previewFileId: imageVariantIds.previewFileId,
       });
       if (waitUntil) {
         waitUntil(enrichTask);
@@ -135,6 +136,7 @@ export class TGAdapter extends BaseAdapter {
         enrichTask.catch((err) => console.warn("[AI] Background enrich failed:", err));
       }
     }
+
 
 
     return { key };

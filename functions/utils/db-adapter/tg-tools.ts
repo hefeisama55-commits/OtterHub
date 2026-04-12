@@ -141,24 +141,31 @@ type TgPhotoVariant = {
   file_size?: number;
 };
 
-/**
- * 从 Telegram 图片上传结果中提取原图与预览图的 file_id。
- */
-export function getTgPhotoVariantIds(response: any): {
+type TgDocumentThumb = {
+  file_id?: string;
+};
+
+type TgDocumentResult = {
+  file_id?: string;
+  thumbnail?: TgDocumentThumb;
+  thumb?: TgDocumentThumb;
+};
+
+type TgImageVariantIds = {
   fileId: string | null;
   previewFileId: string | null;
-} {
-  if (!response?.ok || !Array.isArray(response?.result?.photo)) {
+};
+
+/**
+ * 从 Telegram 图片尺寸列表中提取原图与预览图 file_id。
+ */
+function extractPhotoVariantIds(variants: TgPhotoVariant[]): TgImageVariantIds {
+  const validVariants = variants.filter((item) => typeof item.file_id === "string");
+  if (!validVariants.length) {
     return { fileId: null, previewFileId: null };
   }
 
-  const variants = (response.result.photo as TgPhotoVariant[])
-    .filter((item) => typeof item.file_id === "string");
-  if (!variants.length) {
-    return { fileId: null, previewFileId: null };
-  }
-
-  const sortedVariants = [...variants].sort((prev, current) =>
+  const sortedVariants = [...validVariants].sort((prev, current) =>
     (prev.file_size ?? 0) - (current.file_size ?? 0),
   );
   const originalVariant = sortedVariants[sortedVariants.length - 1];
@@ -173,6 +180,44 @@ export function getTgPhotoVariantIds(response: any): {
 }
 
 /**
+ * 统一提取 Telegram 图片上传结果中的主文件与预览图 file_id。
+ */
+export function getTgImageVariantIds(response: any): TgImageVariantIds {
+  if (!response?.ok || !response?.result) {
+    return { fileId: null, previewFileId: null };
+  }
+
+  if (Array.isArray(response.result.photo)) {
+    return extractPhotoVariantIds(response.result.photo as TgPhotoVariant[]);
+  }
+
+  const documentResult = response.result.document as TgDocumentResult | undefined;
+  if (!documentResult?.file_id) {
+    return { fileId: null, previewFileId: null };
+  }
+
+  const previewFileId =
+    documentResult.thumbnail?.file_id ?? documentResult.thumb?.file_id ?? null;
+
+  return {
+    fileId: documentResult.file_id,
+    previewFileId:
+      previewFileId && previewFileId !== documentResult.file_id ? previewFileId : null,
+  };
+}
+
+/**
+ * 从 Telegram sendPhoto 上传结果中提取原图与预览图的 file_id。
+ */
+export function getTgPhotoVariantIds(response: any): TgImageVariantIds {
+  if (!response?.ok || !Array.isArray(response?.result?.photo)) {
+    return { fileId: null, previewFileId: null };
+  }
+
+  return extractPhotoVariantIds(response.result.photo as TgPhotoVariant[]);
+}
+
+/**
  * 提取 Telegram 上传结果中的主文件 file_id。
  */
 export function getTgFileId(response: any): string | null {
@@ -180,10 +225,9 @@ export function getTgFileId(response: any): string | null {
 
   const result = response.result;
 
-  if (result.photo) {
-    return getTgPhotoVariantIds(response).fileId;
+  if (result.photo || result.document) {
+    return getTgImageVariantIds(response).fileId;
   }
-  if (result.document) return result.document.file_id;
   if (result.video) return result.video.file_id;
   if (result.audio) return result.audio.file_id;
   // 表情包/动图
@@ -192,6 +236,7 @@ export function getTgFileId(response: any): string | null {
 
   return null;
 }
+
 
 /**
  * 提取 Telegram 视频缩略图 file_id。
