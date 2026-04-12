@@ -2,5 +2,5 @@ node_modules
 data
 .wrangler
 .claude
-.trae/documents
-.trae/specs
+.trae
+.codebuddy
