@@ -10,8 +10,6 @@ import { NsfwSign } from "../file-card/NsfwSign";
 import { useGeneralSettingsStore } from "@/stores/general-store";
 import { Image } from "lucide-react";
 
-import { useState } from "react";
-
 interface MasonryImageCardProps {
   file: FileItem;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Trash2, Loader2, RefreshCcw, X } from "lucide-react";
+import { Trash2, Loader2, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,

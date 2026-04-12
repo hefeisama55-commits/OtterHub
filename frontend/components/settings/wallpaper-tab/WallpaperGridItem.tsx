@@ -21,7 +21,7 @@ export function WallpaperGridItem({
 }: WallpaperGridItemProps) {
   return (
     <div
-      className="group relative aspect-[3/2] rounded-xl overflow-hidden border border-border/50 bg-muted shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1.5 cursor-zoom-in"
+      className="group relative aspect-3/2 rounded-xl overflow-hidden border border-border/50 bg-muted shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-1.5 cursor-zoom-in"
       onClick={() => onPreview(wallpaper.previewUrl)}
     >
       <img

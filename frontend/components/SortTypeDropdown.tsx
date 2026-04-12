@@ -2,21 +2,17 @@
 
 import { 
   ArrowDownAZ, 
-  ArrowDownUp, 
   ArrowDownWideNarrow, 
-   ClockArrowDown,
-   ArrowUp,
-   ArrowDown,
-   Check,
-   ChevronDown
+  ClockArrowDown,
+  ArrowUp,
+  ArrowDown,
+  ChevronDown
  } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -39,19 +35,6 @@ const typeOptions = [
     value: SortType.FileSize, 
     label: "文件大小", 
     icon: ArrowDownWideNarrow,
-  },
-];
-
-const orderOptions = [
-  {
-    value: SortOrder.Desc,
-    label: "降序",
-    icon: ArrowDown,
-  },
-  {
-    value: SortOrder.Asc,
-    label: "升序",
-    icon: ArrowUp,
   },
 ];
 

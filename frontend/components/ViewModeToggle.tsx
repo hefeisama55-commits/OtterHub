@@ -1,6 +1,6 @@
 "use client"
 
-import { Grid3x3, LayoutTemplate, List, Music } from "lucide-react"
+import { Grid3x3, LayoutTemplate, List } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useFileDataStore } from "@/stores/file"
 import { useFileUIStore } from "@/stores/file"

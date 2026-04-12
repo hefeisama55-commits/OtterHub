@@ -42,7 +42,7 @@ function ShareContent() {
     setDownloading(true);
     try {
       const downloadUrl = shareApi.getDownloadUrl(token);
-      console.log("downloadUrl", downloadUrl);
+      // console.log("downloadUrl", downloadUrl);
       
       const link = document.createElement('a');
       link.href = downloadUrl;

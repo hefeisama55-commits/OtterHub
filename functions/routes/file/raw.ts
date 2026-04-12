@@ -15,7 +15,7 @@ rawRoutes.get('/:key', async (c) => {
 
   try {
     const item = await db.getFileMetadataWithValue?.(key);
-    if (!item) return fail(c, "File not found", 404);
+    if (!item?.metadata) return fail(c, "File not found", 404);
 
     // Check for private tag
     const isPrivate = item.metadata?.tags?.includes(FileTag.Private);
@@ -38,7 +38,7 @@ rawRoutes.get('/:key', async (c) => {
         if (token) {
           try {
             // Use JWT_SECRET if available, otherwise fallback to PASSWORD
-            await verifyJWT(token, c.env.JWT_SECRET || c.env.PASSWORD);
+            await verifyJWT(token, c.env.JWT_SECRET ?? c.env.PASSWORD ?? "");
             authorized = true;
           } catch (e) {
             // Token invalid

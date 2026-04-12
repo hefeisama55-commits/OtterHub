@@ -32,6 +32,18 @@
       ],
       "@functions/*": [
         "../functions/*"
+      ],
+      "@utils/*": [
+        "../functions/utils/*"
+      ],
+      "types": [
+        "../functions/types/index"
+      ],
+      "types/hono": [
+        "../functions/types/hono"
+      ],
+      "middleware/*": [
+        "../functions/middleware/*"
       ]
     }
   },

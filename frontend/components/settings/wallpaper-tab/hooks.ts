@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { getWallpapers } from "@/lib/api";
 import { WallpaperProvider } from "./types";
 import { getSourceById } from "./sources";
-import { UnifiedWallpaper, WallpaperConfigValue, WallpaperSourceId } from "@shared/types";
+import { UnifiedWallpaper } from "@shared/types";
 import { useWallpaperStore } from "@/stores/wallpaper-store";
 
 /**

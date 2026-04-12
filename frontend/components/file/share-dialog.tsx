@@ -20,7 +20,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { shareApi } from '@/lib/api';
 import { toast } from 'sonner';
-import { Copy, Loader2, Link as LinkIcon } from 'lucide-react';
+import { Copy, Loader2 } from 'lucide-react';
 
 interface ShareDialogProps {
   open: boolean;

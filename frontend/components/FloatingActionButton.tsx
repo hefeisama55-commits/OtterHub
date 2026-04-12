@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Settings, Menu, X, Trash2, Music } from "lucide-react";
+import { LogOut, Settings, Menu, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { logout } from "@/lib/api";

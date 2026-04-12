@@ -4,6 +4,7 @@ import { extractKeyFromTrash, isUploadedChunk, streamToBlob } from "./shared-uti
 import { getUniqueFileId } from "../file";
 import { TEMP_CHUNK_TTL } from "types";
 import { TRASH_EXPIRATION_TTL } from "@shared/types";
+import { fail } from "@utils/response";
 /**
  * 存储适配器基类
  * 提供通用的分片文件处理逻辑
@@ -197,7 +198,12 @@ export abstract class BaseAdapter implements DBAdapter {
     const kv = this.env[this.kvName];
 
     // 1. 获取当前 metadata
-    const { metadata } = await this.getFileMetadataWithValue(key);
+    const item = await this.getFileMetadataWithValue(key);
+    if (!item) {
+      throw new Error("File not found");
+    }
+
+    const { metadata } = item;
     if (!metadata?.chunkInfo) {
       throw new Error("Not a chunked file");
     }
@@ -242,7 +248,10 @@ export abstract class BaseAdapter implements DBAdapter {
     complete: boolean;
   } | null> {
     const item = await this.getFileMetadataWithValue(key);
-    const metadata: FileMetadata = item.metadata;
+    if (!item) {
+      return null;
+    }
+    const { metadata } = item;
 
     if (!metadata?.chunkInfo) {
       return null;
@@ -288,7 +297,15 @@ export abstract class BaseAdapter implements DBAdapter {
     for (let i = 0; i < maxRetries; i++) {
       try {
         // 1. 获取最新状态
-        const { metadata, value } = await this.getFileMetadataWithValue(key);
+        const item = await this.getFileMetadataWithValue(key);
+        if (!item) {
+          throw new Error(`[updateChunkInfo] File not found: ${key}`);
+        }
+
+        const { metadata, value } = item;
+        if (!metadata?.chunkInfo) {
+          throw new Error(`[updateChunkInfo] No metadata/chunkInfo for key: ${key}`);
+        }
 
         const chunks: Chunk[] = value
           ? JSON.parse(value)

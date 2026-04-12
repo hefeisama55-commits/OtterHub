@@ -62,7 +62,7 @@ export function Header() {
                     <Button variant="ghost" size="icon" className="h-10 w-10 text-foreground/70 rounded-xl"><Settings2 className="h-5 w-5" /></Button>
                   </SheetTrigger>
                   <SheetContent side="bottom" className="rounded-t-[2.5rem] border-glass-border bg-popover/95 backdrop-blur-2xl pb-12 px-8">
-                    <SheetHeader className="mb-8 pt-2">
+                    <SheetHeader className="mb-2 pt-2">
                       <div className="mx-auto w-12 h-1.5 rounded-full bg-foreground/10 mb-6" />
                       <SheetTitle className="text-xl font-bold text-foreground flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-primary/10"><Settings2 className="h-5 w-5 text-primary" /></div>

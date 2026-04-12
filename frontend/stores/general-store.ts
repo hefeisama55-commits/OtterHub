@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { useSyncExternalStore } from "react";
 import { ImageLoadMode } from "@/lib/types"; // Assuming ImageLoadMode is here, checking file-store/ui.ts later if not
 import { generalSettingsApi } from "@/lib/api";
 import { toast } from "sonner";
@@ -79,3 +80,16 @@ export const useGeneralSettingsStore = create<GeneralStoreState>()(
     }
   )
 );
+
+/**
+ * SSR 安全的 general settings hook。
+ * 服务端渲染时返回 null，客户端 hydrate 后返回真实 state，
+ * 避免 hydration mismatch，同时消除 mounted+useEffect 反模式。
+ */
+export function useGeneralSettingsStoreClient() {
+  return useSyncExternalStore(
+    useGeneralSettingsStore.subscribe,
+    () => useGeneralSettingsStore.getState(),
+    () => null
+  );
+}

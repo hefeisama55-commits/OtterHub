@@ -28,7 +28,8 @@ export const createNamespacedCacheKey = (namespace: string, key: string) =>
 // ==========================================
 
 export async function getFromCache(request: Request): Promise<Response | null> {
-  return (await getCache()).match(createCacheKey(request));
+  const result = await (await getCache()).match(createCacheKey(request));
+  return result ?? null;
 }
 
 export async function putToCache(request: Request, response: Response, type: keyof typeof CACHE_CONFIG) {

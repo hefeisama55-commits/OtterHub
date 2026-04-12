@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useActiveBucket, useFilteredFiles, useFileDataStore, useFileQueryStore } from "@/stores/file";
 import { useFileUIStore } from "@/stores/file";
 import { FileCard } from "@/components/file-card";

@@ -98,8 +98,8 @@ app.post(
     
     // Verify file exists first
     const db = DBAdapterFactory.getAdapter(c.env);
-    const meta = await db.getFileMetadataWithValue?.(fileKey);
-    if (!meta) return fail(c, 'File not found', 404);
+    const file = await db.getFileMetadataWithValue?.(fileKey);
+    if (!file?.metadata) return fail(c, 'File not found', 404);
 
     const shareId = uuidv4();
     const shareKey = `${shareKeyPrefix}${shareId}`;
@@ -111,8 +111,8 @@ app.post(
       fileKey,
       oneTime,
       createdAt: now,
-      fileName: meta.metadata.fileName,
-      fileSize: meta.metadata.fileSize,
+      fileName: file.metadata.fileName,
+      fileSize: file.metadata.fileSize,
       expiresAt,
     };
 

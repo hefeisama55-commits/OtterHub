@@ -31,7 +31,6 @@ export function BatchOperationsBar() {
   
   const {
     clearSelection,
-    selectAll,
     addSelection,
     removeSelection,
     viewMode,

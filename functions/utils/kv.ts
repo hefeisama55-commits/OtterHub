@@ -1,4 +1,4 @@
-import { KVNamespace } from "types/hono";
+import { KVNamespace } from "../types/hono";
 
 export async function kvGetJSON<T>(
   kv: KVNamespace,

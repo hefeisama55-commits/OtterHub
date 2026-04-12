@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Key, Save, ExternalLink, Eye, EyeOff } from "lucide-react";
 import {
   Dialog,
@@ -34,12 +34,14 @@ export function ApiKeyDialog({
   const [key, setKey] = useState(currentApiKey);
   const [showKey, setShowKey] = useState(false);
 
-  useEffect(() => {
-    if (open) {
+  /** 拦截 open 变化：dialog 打开时在事件回调中同步重置内部状态，避免 useEffect 反模式 */
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen) {
       setKey(currentApiKey);
       setShowKey(false);
     }
-  }, [open, currentApiKey]);
+    onOpenChange(nextOpen);
+  };
 
   const handleSave = () => {
     onSave(key);
@@ -56,7 +58,7 @@ export function ApiKeyDialog({
   if (!source.requiresApiKey) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px] bg-background/95 backdrop-blur-xl border-border shadow-2xl">
         <DialogDescription></DialogDescription>
         <DialogHeader>

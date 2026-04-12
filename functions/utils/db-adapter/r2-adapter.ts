@@ -34,7 +34,7 @@ export class R2Adapter extends BaseAdapter {
   ): Promise<{ key: string }> {
     const fileId = getUniqueFileId();
     const fileName = metadata.fileName;
-    const fileExtension = fileName.split(".").pop().toLowerCase();
+    const fileExtension = (fileName.split(".").pop() ?? "").toLowerCase();
 
     // 根据文件类型确定前缀
     let fileType: FileType;
@@ -74,7 +74,7 @@ export class R2Adapter extends BaseAdapter {
   ): Promise<{ key: string }> {
     const fileId = getUniqueFileId();
     const fileName = metadata.fileName;
-    const fileExtension = fileName.split(".").pop().toLowerCase();
+    const fileExtension = (fileName.split(".").pop() ?? "").toLowerCase();
     const contentType = getContentTypeByExt(fileExtension);
 
     // 根据文件类型确定前缀
@@ -158,7 +158,7 @@ export class R2Adapter extends BaseAdapter {
       const range = req?.headers.get("Range");
 
       // 处理 Range 请求（使用通用工具函数）
-      const rangeResult = parseRangeHeader(range, size);
+      const rangeResult = parseRangeHeader(range ?? null, size);
       if (rangeResult) {
         const { start, end } = rangeResult;
 
@@ -178,11 +178,12 @@ export class R2Adapter extends BaseAdapter {
 
       headers.set("Content-Length", String(size));
       // 获取元数据以获取原始文件名
-      const { metadata } = await this.getFileMetadataWithValue(key);  //  这里如果是trash, 则用trash的key，如果非trash，即用原Key，即都是key
-      if (!metadata) {
-        console.error(`[getSingleFile] No metadata found for key: ${key}`);
+      const item = await this.getFileMetadataWithValue(key);  //  这里如果是trash, 则用trash的key，如果非trash，即用原Key
+      if (!item) {
         return failResponse("Metadata not found", 404);
       }
+      const { metadata } = item;
+
       headers.set(
         "Content-Disposition",
         encodeContentDisposition(metadata.fileName, false),
@@ -197,7 +198,11 @@ export class R2Adapter extends BaseAdapter {
 
   private async getMergedFile(key: string, req?: Request): Promise<Response> {
     try {
-      const { metadata, value } = await this.getFileMetadataWithValue(key);
+      const item = await this.getFileMetadataWithValue(key);
+      if (!item) {
+        return failResponse("File not found", 404);
+      }
+      const { metadata, value } = item;
       
       if (!metadata) {
         console.error(`[getMergedFile] No metadata found for key: ${key}`);
@@ -216,7 +221,7 @@ export class R2Adapter extends BaseAdapter {
       }
 
       // 使用通用工具函数验证分片完整性
-      const validation = validateChunksForMerge(chunks, metadata.chunkInfo.total);
+      const validation = validateChunksForMerge(chunks, metadata.chunkInfo?.total ?? 0);
       if (!validation.valid) {
         console.error(`[getMergedFile] ${validation.reason}`);
         return failResponse(validation.reason || "Invalid metadata", 425);
@@ -374,12 +379,11 @@ export class R2Adapter extends BaseAdapter {
 
   async delete(key: string): Promise<{ isDeleted: boolean }> {
     try {
-      const { value } = await this.getFileMetadataWithValue(key);
-
+      const item = await this.getFileMetadataWithValue(key);
       let chunks: Chunk[] = [];
-      if (value) {
+      if (item?.value) {
         try {
-          chunks = JSON.parse(value);
+          chunks = JSON.parse(item?.value);
         } catch (e) {
           console.error(`[delete] Failed to parse chunks for ${key}:`, e);
           // 如果解析失败，可能是单文件或损坏的元数据，继续尝试删除主文件

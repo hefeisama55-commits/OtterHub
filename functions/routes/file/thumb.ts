@@ -7,14 +7,19 @@ export const thumbRoutes = new Hono<{ Bindings: Env }>();
 
 thumbRoutes.get('/:key/thumb', async (c) => {
   const thumbFileId = c.req.param('key');
+  const botToken = c.env.TG_BOT_TOKEN;
+
+  if (!botToken) {
+    return fail(c, "TG_BOT_TOKEN not configured", 500);
+  }
 
   try {
-    const filePath = await getTgFilePath(thumbFileId, c.env.TG_BOT_TOKEN);
+    const filePath = await getTgFilePath(thumbFileId, botToken);
     if (!filePath) {
       return fail(c, "Thumbnail not found", 404);
     }
 
-    const thumbUrl = buildTgFileUrl(c.env.TG_BOT_TOKEN, filePath);
+    const thumbUrl = buildTgFileUrl(botToken, filePath);
     const response = await fetch(thumbUrl);
 
     if (!response.ok) {
@@ -27,7 +32,7 @@ thumbRoutes.get('/:key/thumb', async (c) => {
     );
     c.header('Cache-Control', 'public, max-age=86400');
 
-    return c.body(response.body);
+    return response.body ? c.body(response.body) : c.body(null);
   } catch (error: any) {
     console.error('Fetch thumbnail error:', error);
     return fail(c, error.message);

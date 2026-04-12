@@ -9,18 +9,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { useState, useEffect } from "react"
-import { useGeneralSettingsStore } from "@/stores/general-store"
+import { useGeneralSettingsStoreClient } from "@/stores/general-store"
 
 export function SafeModeToggle() {
-  const { safeMode, setSafeMode } = useGeneralSettingsStore()
-  const [mounted, setMounted] = useState(false)
+  const store = useGeneralSettingsStoreClient()
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
+  // store 为 null 表示 SSR 阶段，渲染骨架占位
+  if (!store) {
     return (
       <Button
         variant="ghost"
@@ -31,6 +26,8 @@ export function SafeModeToggle() {
       </Button>
     )
   }
+
+  const { safeMode, setSafeMode } = store
 
   return (
     <TooltipProvider>
@@ -61,3 +58,4 @@ export function SafeModeToggle() {
     </TooltipProvider>
   )
 }
+

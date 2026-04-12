@@ -20,9 +20,8 @@ export const shareApi = {
       return result as ShareItem[];
     }
     
-    // @ts-ignore - 处理 ApiResponse 格式
+    // 处理 ApiResponse 格式
     if (result && typeof result === 'object' && 'success' in result && result.success && Array.isArray(result.data)) {
-      // @ts-ignore
       return result.data as ShareItem[];
     }
     
@@ -43,15 +42,11 @@ export const shareApi = {
 
     const result = await res.json();
     
-    // @ts-ignore
     if (result.success && result.data) {
-        // @ts-ignore
         return result.data;
     }
     
-    // @ts-ignore
     if (result.token) {
-        // @ts-ignore
         return result as { token: string };
     }
     
@@ -71,7 +66,7 @@ export const shareApi = {
     }
 
     const result = await res.json();
-    // @ts-ignore
+    
     return result.success === true;
   },
 
@@ -90,7 +85,7 @@ export const shareApi = {
    * 获取下载链接
    */
   getDownloadUrl: (token: string) => {
-    console.log(`${API_URL}/share/${token}/raw`);
+    // console.log(`${API_URL}/share/${token}/raw`);
     return `${API_URL}/share/${token}/raw`;
   }
 };

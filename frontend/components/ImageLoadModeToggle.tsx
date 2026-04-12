@@ -8,10 +8,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useGeneralSettingsStore } from "@/stores/general-store";
+import { useGeneralSettingsStoreClient } from "@/stores/general-store";
 import { ImageLoadMode } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
 
 const MODES = {
   [ImageLoadMode.Default]: { label: "默认", icon: Image, desc: "全量加载" },
@@ -20,14 +19,10 @@ const MODES = {
 };
 
 export function ImageLoadModeToggle() {
-  const { imageLoadMode, setImageLoadMode } = useGeneralSettingsStore();
-  const [mounted, setMounted] = useState(false);
+  const store = useGeneralSettingsStoreClient();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
+  // store 为 null 表示 SSR 阶段，渲染骨架占位
+  if (!store) {
     const DefaultIcon = MODES[ImageLoadMode.DataSaver].icon;
     return (
       <Button
@@ -40,7 +35,7 @@ export function ImageLoadModeToggle() {
     );
   }
 
-  // Ensure type safety when accessing MODES
+  const { imageLoadMode, setImageLoadMode } = store;
   const modeConfig = MODES[imageLoadMode as ImageLoadMode] || MODES[ImageLoadMode.Default];
   const Icon = modeConfig.icon;
 
@@ -82,3 +77,4 @@ export function ImageLoadModeToggle() {
     </DropdownMenu>
   );
 }
+
