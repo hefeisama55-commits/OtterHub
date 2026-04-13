@@ -27,10 +27,11 @@ const AI_INPUT_MAX_BYTES = 2 * 1024 * 1024; // 仅用于内存文件的兜底限
 export const AI_MODEL = "@cf/llava-hf/llava-1.5-7b-hf";
 
 export const AI_OUTPUT_PROMPT =
-  "5-10 comma-separated image search tags. " +
-  "Prioritize subject, action, object, scene. " +
-  "Use short concrete phrases. " +
-  "No duplicates, no tiny details, max one color, no sentences.";
+  "Return exactly 6 comma-separated image search tags. " +
+  "Only the most important tags. " +
+  "Prefer subject, action, object, scene. " +
+  "At most one color. " +
+  "No duplicates. No sentences.";
 
 export function isSupportedImage(mimeType?: string | null, fileName?: string): boolean {
   if (mimeType) return SUPPORTED_IMAGE_PREFIXES.some((p) => mimeType.startsWith(p));
@@ -137,7 +138,7 @@ export async function analyzeImageAndEnrich(
     const result = await env.AI.run(AI_MODEL, {
       image: Array.from(new Uint8Array(buffer)), 
       prompt: AI_OUTPUT_PROMPT,
-      max_tokens: 100,
+      max_tokens: 50,
     });
 
     const desc = normalizeDesc(extractImageDesc(result));
