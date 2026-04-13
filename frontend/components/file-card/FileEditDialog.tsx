@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { editMetadata, analyzeImage } from "@/lib/api";
+import { editMetadata, analyzeImage, getFileUrl } from "@/lib/api";
 import { FileItem, MAX_FILENAME_LENGTH, MAX_DESC_LENGTH, FileType } from "@shared/types";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { TagSelector } from "@/components/TagSelector";
@@ -69,13 +69,35 @@ export function FileEditDialog({
     }
   }, [file]);
 
+  // 将图片 URL 加载并压缩为 JPEG Blob（参考 nsfw-detector 的 resizeImage 模式）
+  const compressImageFromUrl = (url: string, size = 480): Promise<Blob> =>
+    new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = canvas.height = size;
+        canvas.getContext("2d")!.drawImage(img, 0, 0, size, size);
+        canvas.toBlob(
+          (blob) => (blob ? resolve(blob) : reject(new Error("Canvas toBlob failed"))),
+          "image/jpeg",
+          0.8
+        );
+      };
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.src = url;
+    });
+
   // AI分析图片生成描述
   const handleAnalyzeImage = async () => {
     if (!file || isAnalyzing) return;
 
+    const imgUrl = file.metadata?.thumbUrl || getFileUrl(file.name);
+
     setIsAnalyzing(true);
     try {
-      const result = await analyzeImage(file.name);
+      const blob = await compressImageFromUrl(imgUrl);
+      const result = await analyzeImage(file.name, blob);
       const newDesc = result.desc || "";
       
       // 如果超过长度限制，截断
@@ -197,13 +219,11 @@ export function FileEditDialog({
                 >
                   {isAnalyzing ? (
                     <>
-                      <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                      分析中
+                      <Loader2 className="h-3 w-3 animate-spin" />
                     </>
                   ) : (
                     <>
-                      <Sparkles className="h-3 w-3 mr-1" />
-                      AI分析
+                      <Sparkles className="h-3 w-3" />
                     </>
                   )}
                 </Button>

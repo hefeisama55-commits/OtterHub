@@ -294,12 +294,15 @@ export async function editMetadata(
 }
 
 /**
- * AI分析图片生成描述
+ * AI分析图片生成描述，blob 为前端已压缩的图片
  */
-export async function analyzeImage(key: string): Promise<{ desc: string }> {
-  return unwrap<{ desc: string }>(
-    client.file[":key"].analyze.$post({
-      param: { key },
-    })
-  );
+export async function analyzeImage(key: string, blob: Blob): Promise<{ desc: string }> {
+  const formData = new FormData();
+  formData.append("image", blob, "image.jpg");
+  const res = await fetch(`${API_URL}/file/${encodeURIComponent(key)}/analyze`, {
+    method: "POST",
+    body: formData,
+    credentials: "include",
+  });
+  return unwrap<{ desc: string }>(res);
 }
