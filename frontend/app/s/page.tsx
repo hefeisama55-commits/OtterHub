@@ -136,7 +136,7 @@ function ShareContent() {
                         {cat === 'image' && url ? <img src={url} alt={file.name} className="w-full h-full object-cover" loading="lazy" /> : <FileIconByType category={cat} className="h-12 w-12 text-primary/50" />}
                       </div>
                       <div className="p-2 truncate">
-                        <p className="text-xs font-medium truncate">{file.name}</p>
+                        <p className="text-xs font-medium truncate" title={file.name}>{file.name}</p>
                         <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
                       </div>
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">

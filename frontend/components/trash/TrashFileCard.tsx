@@ -118,7 +118,7 @@ export function TrashFileCard({ file }: TrashFileCardProps) {
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className={`text-sm font-medium truncate ${TextColor}`}>
+          <p className={`text-sm font-medium truncate ${TextColor}`} title={file.metadata?.fileName || file.name}>
             {file.metadata?.fileName || file.name}
           </p>
         </div>
