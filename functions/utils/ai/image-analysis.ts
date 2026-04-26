@@ -24,7 +24,7 @@ type AIImageSource = {
 const SUPPORTED_IMAGE_PREFIXES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const AI_INPUT_MAX_BYTES = 2 * 1024 * 1024; // 仅用于内存文件的兜底限制
 
-export const AI_MODEL = "@cf/llava-hf/llava-1.5-7b-hf";
+export const AI_MODEL = "@cf/meta/llama-3.2-11b-vision-instruct";
 export const AI_MAX_TOKENS = 40;
 
 export const AI_OUTPUT_PROMPT =
