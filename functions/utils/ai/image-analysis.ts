@@ -28,9 +28,9 @@ export const AI_MODEL = "@cf/llava-hf/llava-1.5-7b-hf";
 export const AI_MAX_TOKENS = 40;
 
 export const AI_OUTPUT_PROMPT =
-  "Return precise, comma-separated image tags. " +
-  "Priority: subject > action > style > scene. " +
-  "No generic words, no duplicates, no sentences. Only pure keywords.";
+  "用中文返回精确的、逗号分隔的图片标签。 " +
+   "优先级：主体 > 动作 > 风格 > 场景。 " +
+   "不要通用词，不要重复，不要句子。只返回纯关键词。";
   
 export function isSupportedImage(mimeType?: string | null, fileName?: string): boolean {
   if (mimeType) return SUPPORTED_IMAGE_PREFIXES.some((p) => mimeType.startsWith(p));
