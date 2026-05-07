@@ -54,6 +54,10 @@ export type FileMetadata = {
 export enum FileTag {
   NSFW = 'nsfw',  // 非安全内容
   Private = 'private',  // 私有文件, 不允许其他人通过url直接访问到
+  School = 'school',        // 学校文件
+  Photo = 'photo',          // 照片
+  Art = 'art',              // 艺术类
+  Important = 'important',  // 重要
 }
 
 export type UploadTagsInput = FileTag[];
