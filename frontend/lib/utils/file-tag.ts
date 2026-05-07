@@ -24,6 +24,34 @@ export const TAG_CONFIG: Record<FileTag, TagDisplayConfig> = {
     textColor: "text-purple-300 dark:text-purple-400",
     borderColor: "border-purple-500/50",
   },
+  [FileTag.School]: {
+    label: "School",
+    description: "学校文档",
+    bgColor: "bg-blue-500/20",
+    textColor: "text-blue-700 dark:text-blue-300",
+    borderColor: "border-blue-500/50",
+  },
+  [FileTag.Photo]: {
+    label: "Photo",
+    description: "照片",
+    bgColor: "bg-green-500/20",
+    textColor: "text-green-700 dark:text-green-300",
+    borderColor: "border-green-500/50",
+  },
+  [FileTag.Art]: {
+    label: "Art",
+    description: "艺术作品",
+    bgColor: "bg-rose-500/20",
+    textColor: "text-rose-700 dark:text-rose-300",
+    borderColor: "border-rose-500/50",
+  },
+  [FileTag.Important]: {
+    label: "Important",
+    description: "重要文件",
+    bgColor: "bg-red-500/20",
+    textColor: "text-red-700 dark:text-red-300",
+    borderColor: "border-red-500/50",
+  },
 };
 
 export enum BatchTagState {
