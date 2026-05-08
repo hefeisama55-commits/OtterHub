@@ -197,10 +197,10 @@ export interface ShareMetaResponse {
 export const MAX_FILENAME_LENGTH = 128; // 最大文件名长度（包括扩展名）
 export const MAX_DESC_LENGTH = 300; // 最大描述长度
 
-export const MAX_CHUNK_SIZE = 15 * 1024 * 1024; // 20MB, TG BOT API 可供下载的最大文件大小为20MB
+export const MAX_CHUNK_SIZE = 10 * 1024 * 1024; // 10MB, TG BOT API 可供下载的最大文件大小为20MB
 
 // 打包分享最大文件数量限制（防止 Cloudflare Worker CPU 超时）
-export const MAX_FILES_IN_BUNDLE = 50;
-export const MAX_CHUNK_NUM = 50                 // 由于Cloudflare Worker的CPU限制，这里限制最大分片数为50, 即文件大小不得超过1000MB≈1GB
+export const MAX_FILES_IN_BUNDLE = 100;
+export const MAX_CHUNK_NUM = 100                 // 由于Cloudflare Worker的CPU限制，这里限制最大分片数为100, 即文件大小不得超过1000MB≈1GB
 export const MAX_FILE_SIZE = MAX_CHUNK_SIZE * MAX_CHUNK_NUM
 export const TRASH_EXPIRATION_TTL = 30 * 24 * 60 * 60; // 设置 30 天过期
